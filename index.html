@@ -52,9 +52,13 @@
 
     .header-logo {
       font-family: var(--serif);
-      font-size: 20px;
+      font-size: clamp(13px, 2.2vw, 20px);
       color: var(--accent);
       letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     .header-meta {
@@ -83,6 +87,23 @@
       object-fit: cover;
       display: block;
     }
+
+    .hamburger {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      font-size: 15px;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .hamburger:hover { border-color: var(--accent); color: var(--accent); }
 
     .layout { display: flex; flex: 1; overflow: hidden; }
 
@@ -174,9 +195,6 @@
 
     .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; }
     .sidebar-footer span { color: var(--accent); }
-
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; }
-    .overlay.show { display: block; }
 
     main { flex: 1; overflow-y: auto; padding: 40px 48px; }
 
@@ -312,16 +330,38 @@
     }
     footer .accent { color: var(--accent); }
 
+    /* RESPONSIVE */
     @media (max-width: 768px) {
-      :root { --sidebar-w: 240px; }
-      aside { position: fixed; top: var(--header-h); left: 0; bottom: var(--footer-h); z-index: 80; transform: translateX(-100%); }
-      aside.open { transform: translateX(0); }
+      .hamburger { display: flex; }
+
+      aside {
+        position: fixed;
+        top: var(--header-h);
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        z-index: 90;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        transition: max-height 0.35s ease;
+        /* override desktop flex behaviour */
+        flex-direction: column;
+      }
+      aside.open { max-height: 75vh; overflow-y: auto; }
+      .sidebar-footer { display: none; }
+
       main { padding: 28px 20px; }
       .about-grid { grid-template-columns: 1fr; }
       .gallery-grid-set1, .gallery-grid-set2, .gallery-grid-set3 { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 480px) { main { padding: 20px 16px; } }
+    @media (max-width: 480px) {
+      main { padding: 20px 16px; }
+      .header-logo { font-size: 14px; }
+      .status-text { display: none; }
+    }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -336,11 +376,10 @@
   <div class="header-meta">
     <div class="dot"></div>
     <span class="status-text">available for work</span>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
     <img class="header-image" src="images/hiddndesign_icon_small.jpeg" alt="hiddndesign icon" id="header-img" style="cursor:pointer;" />
   </div>
 </header>
-
-<div class="overlay" id="overlay"></div>
 
 <div class="layout">
 
@@ -409,7 +448,7 @@
       <h1>All <em>Works</em></h1>
       <p class="page-subtitle">$ ls -la /gallery</p>
       <hr class="divider">
-      <p>A collection of my digital artworks.</p>
+      <p>A collection of all my artwork.</p>
       <p class="set-label"><span>/</span> set_1</p>
       <div class="gallery-grid gallery-grid-set1">
         <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
@@ -455,7 +494,6 @@
       <h1><em>Set</em> 1</h1>
       <p class="page-subtitle">$ ls /gallery/set_1</p>
       <hr class="divider">
-      <p>Mar. 10, 2026</p>
       <p>My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.</p>
       <div class="gallery-grid gallery-grid-set1">
         <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
@@ -475,7 +513,7 @@
       <h1><em>Set</em> 2</h1>
       <p class="page-subtitle">$ ls /gallery/set_2</p>
       <hr class="divider">
-      <p>Add your description for Set 2 here.</p>
+      <p>In progress.</p>
       <div class="gallery-grid gallery-grid-set2">
         <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
         <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
@@ -513,8 +551,10 @@
       <h1>Bio<em>.txt</em></h1>
       <p class="page-subtitle">$ cat /about_me/bio.txt</p>
       <hr class="divider">
-      <p>Independent creative working at the intersection of image-making and systems thinking. Based somewhere with good light and slow coffee. Available for editorial, brand, and experimental commissions.</p>
-      <p>Previously at a few places you have heard of, now working for myself and the occasional client who lets me do strange things.</p>
+      <p> I am a freelance graphic designer and artist.</p>
+      <p>Available for commissions, consultations, and collaborations.</p>
+      <p>All art featured on this website is of my own creation using open source software.</p>
+      <p>-B. Hazlett</p>
       <div class="about-grid">
         <div class="about-cell"><div class="label">location</div><div class="value">Hawthorne, Florida</div></div>
         <div class="about-cell"><div class="label">status</div><div class="value">Open to work</div></div>
@@ -527,7 +567,8 @@
       <h1>Contact<em>.md</em></h1>
       <p class="page-subtitle">$ cat /about_me/contact.md</p>
       <hr class="divider">
-      <p>Inquiries for commissions, collaborations, and licensing welcome. Response time is usually within 48 hours.</p>
+      <p>Inquiries, questions, and discussions of my work are encouraged, I will try to respond in a timely manner.</p>
+      <p>My active operating hours are from 10:00AM - 6:00PM EST M-F</p>
       <div class="about-grid">
         <div class="about-cell"><div class="label">email</div><div class="value" style="font-family:var(--mono);font-size:13px">hiddndesign@proton.me</div></div>
         <div class="about-cell"><div class="label">instagram</div><div class="value" style="font-family:var(--mono);font-size:13px">@oh.bhaze</div></div>
@@ -538,21 +579,21 @@
       <h1><em>Store</em> 1</h1>
       <p class="page-subtitle">$ ls /featured_in/store_1</p>
       <hr class="divider">
-      <p>your store could be here!</p>
+      <p>Add store 1 content here.</p>
     </section>
 
     <section class="page" id="page-featured-store2">
       <h1><em>Store</em> 2</h1>
       <p class="page-subtitle">$ ls /featured_in/store_2</p>
       <hr class="divider">
-      <p>your store could be here!</p>
+      <p>Add store 2 content here.</p>
     </section>
 
     <section class="page" id="page-featured-store3">
       <h1><em>Store</em> 3</h1>
       <p class="page-subtitle">$ ls /featured_in/store_3</p>
       <hr class="divider">
-      <p>your store could be here!</p>
+      <p>Add store 3 content here.</p>
     </section>
 
     <section class="page" id="page-featured-coming">
@@ -567,13 +608,15 @@
 
 <footer>
   <span>2026 <span class="accent">portfolio</span></span>
-  <span>vibecoded with <span class="accent">html · css · js</span></span>
+  <span>built with <span class="accent">html · css · js</span></span>
 </footer>
 
 <script>
   var navLinks   = document.querySelectorAll('.nav-link');
   var pages      = document.querySelectorAll('.page');
   var breadcrumb = document.getElementById('breadcrumb-path');
+  var sidebar    = document.getElementById('sidebar');
+  var hamburger  = document.getElementById('hamburger');
 
   function showPage(pageId, crumb) {
     pages.forEach(function(p) { p.classList.remove('active'); });
@@ -585,10 +628,27 @@
     breadcrumb.textContent = crumb.replace(/^\//, '');
   }
 
+  function closeMobileNav() {
+    sidebar.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.innerHTML = '&#9776;';
+  }
+
+  function openMobileNav() {
+    sidebar.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.innerHTML = '&#10005;';
+  }
+
+  hamburger.addEventListener('click', function() {
+    sidebar.classList.contains('open') ? closeMobileNav() : openMobileNav();
+  });
+
   navLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
       e.preventDefault();
       showPage(link.dataset.page, link.dataset.crumb);
+      closeMobileNav();
     });
   });
 
