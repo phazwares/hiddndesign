@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0e0e0e;
+      --surface:   #161616;
+      --border:    #2a2a2a;
+      --text:      #d4e8de;
+      --muted:     #666;
+      --accent:    #6ec878;
+      --accent2:   #7ea3b8;
+      --sidebar-w: 260px;
+      --header-h:  56px;
+      --footer-h:  48px;
+      --mono:      'DM Mono', monospace;
+      --serif:     'DM Serif Display', serif;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .header-logo {
+      font-family: var(--serif);
+      font-size: 20px;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .header-meta {
+      color: var(--muted);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-meta .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .header-image {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .layout { display: flex; flex: 1; overflow: hidden; }
+
+    aside {
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 20px 16px 12px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tree { padding: 12px 0; flex: 1; }
+    .tree ul { list-style: none; }
+    .tree-root > li { margin-bottom: 4px; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--text);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      transition: background 0.15s;
+    }
+    .section-label:hover { background: rgba(110,200,120,0.07); }
+    .section-label.active { color: var(--accent); }
+    .section-label .icon {
+      color: var(--accent);
+      font-size: 11px;
+      width: 14px;
+      text-align: center;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .section-label.open .icon { transform: rotate(90deg); }
+    .section-label .folder { color: var(--accent2); }
+
+    .tree-children { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+    .tree-children.open { max-height: 500px; }
+    .tree-children ul { padding: 0 0 4px 0; }
+    .tree-children li { position: relative; padding-left: 40px; }
+    .tree-children li::before {
+      content: '';
+      position: absolute;
+      left: 26px; top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .tree-children li:last-child::before { height: 50%; }
+    .tree-children li::after {
+      content: '';
+      position: absolute;
+      left: 26px; top: 50%;
+      width: 10px; height: 1px;
+      background: var(--border);
+    }
+    .tree-children a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px 6px 4px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11.5px;
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tree-children a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .tree-children a.active { color: var(--accent); }
+    .tree-children a .file-icon { color: var(--accent2); font-size: 10px; flex-shrink: 0; }
+
+    .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; }
+    .sidebar-footer span { color: var(--accent); }
+
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; }
+    .overlay.show { display: block; }
+
+    main { flex: 1; overflow-y: auto; padding: 40px 48px; }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+    }
+    .breadcrumb span { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border); }
+
+    .page { display: none; animation: fadein 0.3s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 4vw, 46px);
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    h1 em { color: var(--accent); font-style: italic; }
+    h2 { font-family: var(--serif); font-size: 22px; color: var(--text); margin: 36px 0 12px; }
+    .page-subtitle { color: var(--muted); font-size: 12px; margin-bottom: 36px; letter-spacing: 0.04em; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+    p { color: #a0b8a4; font-size: 13px; line-height: 1.9; max-width: 620px; margin-bottom: 16px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2px;
+      margin-top: 24px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .gallery-grid-set1,
+    .gallery-grid-set2,
+    .gallery-grid-set3 { grid-template-columns: repeat(5, 1fr); }
+
+    .gallery-grid-set1 .gallery-item,
+    .gallery-grid-set2 .gallery-item,
+    .gallery-grid-set3 .gallery-item { aspect-ratio: 17 / 22; }
+
+    .set-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 32px 0 10px; }
+    .set-label span { color: var(--accent); }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      z-index: 1;
+    }
+    .gallery-item:hover { border-color: var(--accent); }
+    .gallery-item.is-hovered { transform: scale(1.2); box-shadow: 0 12px 40px rgba(0,0,0,0.6); z-index: 20; }
+    .gallery-item.is-shrinking { z-index: 5; }
+    .gallery-item .gallery-overlay { opacity: 0; }
+    .gallery-item.is-hovered .gallery-overlay { opacity: 1; }
+    .gallery-item img { transition: none; }
+
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(14,14,14,0.75);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+      gap: 4px;
+    }
+    .gallery-overlay span { font-size: 11px; color: var(--accent); }
+    .gallery-overlay small { font-size: 10px; color: var(--muted); }
+
+    .featured-list { display: flex; flex-direction: column; gap: 1px; margin-top: 24px; }
+    .featured-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+    .featured-card:hover { border-color: var(--accent); }
+    .featured-card-body h3 { font-family: var(--serif); font-size: 16px; color: var(--text); margin-bottom: 4px; }
+    .featured-card-body p { font-size: 12px; color: var(--muted); margin: 0; }
+    .featured-card-meta { font-size: 10px; color: var(--accent2); white-space: nowrap; letter-spacing: 0.08em; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; }
+    .about-cell { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
+    .about-cell .label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .about-cell .value { font-family: var(--serif); font-size: 15px; color: var(--text); }
+
+    .tag {
+      display: inline-block;
+      background: rgba(110,200,120,0.1);
+      border: 1px solid rgba(110,200,120,0.3);
+      color: var(--accent);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.08em;
+      margin: 3px 2px 3px 0;
+    }
+
+    footer {
+      height: var(--footer-h);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+    footer .accent { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 240px; }
+      aside { position: fixed; top: var(--header-h); left: 0; bottom: var(--footer-h); z-index: 80; transform: translateX(-100%); }
+      aside.open { transform: translateX(0); }
+      main { padding: 28px 20px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .gallery-grid-set1, .gallery-grid-set2, .gallery-grid-set3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) { main { padding: 20px 16px; } }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">~/hiddndesign/bh/portfolio</div>
+  <div class="header-meta">
+    <div class="dot"></div>
+    <span class="status-text">available for work</span>
+    <img class="header-image" src="images/hiddndesign_icon_small.jpeg" alt="hiddndesign icon" id="header-img" style="cursor:pointer;" />
+  </div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="layout">
+
+  <aside id="sidebar">
+    <div class="sidebar-header">file system</div>
+    <nav class="tree" aria-label="Site navigation">
+      <ul class="tree-root">
+
+        <li>
+          <div class="section-label open" data-target="gallery-tree" role="button" tabindex="0" aria-expanded="true">
+            <span class="icon">&#9658;</span>
+            <span class="folder">&#9672;</span>
+            <span>/gallery</span>
+          </div>
+          <div class="tree-children open" id="gallery-tree">
+            <ul>
+              <li><a href="#" class="nav-link active" data-page="gallery-all" data-crumb="/gallery"><span class="file-icon">&#9702;</span> all_works</a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set1" data-crumb="/gallery/set_1"><span class="file-icon">&#9702;</span> set_1</a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set2" data-crumb="/gallery/set_2"><span class="file-icon">&#9702;</span> set_2</a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set3" data-crumb="/gallery/coming_soon"><span class="file-icon">&#9702;</span> coming_soon</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li>
+          <div class="section-label" data-target="about-tree" role="button" tabindex="0" aria-expanded="false">
+            <span class="icon">&#9658;</span>
+            <span class="folder">&#9672;</span>
+            <span>/about_me</span>
+          </div>
+          <div class="tree-children" id="about-tree">
+            <ul>
+              <li><a href="#" class="nav-link" data-page="about-bio" data-crumb="/about_me/bio"><span class="file-icon">&#9702;</span> bio.txt</a></li>
+              <li><a href="#" class="nav-link" data-page="about-contact" data-crumb="/about_me/contact"><span class="file-icon">&#9702;</span> contact.md</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li>
+          <div class="section-label" data-target="featured-tree" role="button" tabindex="0" aria-expanded="false">
+            <span class="icon">&#9658;</span>
+            <span class="folder">&#9672;</span>
+            <span>/featured_in</span>
+          </div>
+          <div class="tree-children" id="featured-tree">
+            <ul>
+              <li><a href="#" class="nav-link" data-page="featured-store1" data-crumb="/featured_in/store_1"><span class="file-icon">&#9702;</span> store_1</a></li>
+              <li><a href="#" class="nav-link" data-page="featured-store2" data-crumb="/featured_in/store_2"><span class="file-icon">&#9702;</span> store_2</a></li>
+              <li><a href="#" class="nav-link" data-page="featured-store3" data-crumb="/featured_in/store_3"><span class="file-icon">&#9702;</span> store_3</a></li>
+              <li><a href="#" class="nav-link" data-page="featured-coming" data-crumb="/featured_in/coming_soon"><span class="file-icon">&#9702;</span> coming_soon</a></li>
+            </ul>
+          </div>
+        </li>
+
+      </ul>
+    </nav>
+    <div class="sidebar-footer"><span>3</span> dirs &nbsp;&middot;&nbsp; <span>10</span> files</div>
+  </aside>
+
+  <main id="main">
+    <div class="breadcrumb">
+      <span>~</span><span class="sep">/</span><span id="breadcrumb-path">gallery</span>
+    </div>
+
+    <section class="page active" id="page-gallery-all">
+      <h1>All <em>Works</em></h1>
+      <p class="page-subtitle">$ ls -la /gallery</p>
+      <hr class="divider">
+      <p>A collection of my digital artworks.</p>
+      <p class="set-label"><span>/</span> set_1</p>
+      <div class="gallery-grid gallery-grid-set1">
+        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+      <p class="set-label"><span>/</span> set_2</p>
+      <div class="gallery-grid gallery-grid-set2">
+        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+      <p class="set-label"><span>/</span> coming_soon</p>
+      <div class="gallery-grid gallery-grid-set3">
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-gallery-set1">
+      <h1><em>Set</em> 1</h1>
+      <p class="page-subtitle">$ ls /gallery/set_1</p>
+      <hr class="divider">
+      <p>Mar. 10, 2026</p>
+      <p>My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.</p>
+      <div class="gallery-grid gallery-grid-set1">
+        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-gallery-set2">
+      <h1><em>Set</em> 2</h1>
+      <p class="page-subtitle">$ ls /gallery/set_2</p>
+      <hr class="divider">
+      <p>Add your description for Set 2 here.</p>
+      <div class="gallery-grid gallery-grid-set2">
+        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-gallery-set3">
+      <h1>Coming <em>Soon</em></h1>
+      <p class="page-subtitle">$ ls /gallery/coming_soon</p>
+      <hr class="divider">
+      <p>New work on the way.</p>
+      <div class="gallery-grid gallery-grid-set3">
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-about-bio">
+      <h1>Bio<em>.txt</em></h1>
+      <p class="page-subtitle">$ cat /about_me/bio.txt</p>
+      <hr class="divider">
+      <p>Independent creative working at the intersection of image-making and systems thinking. Based somewhere with good light and slow coffee. Available for editorial, brand, and experimental commissions.</p>
+      <p>Previously at a few places you have heard of, now working for myself and the occasional client who lets me do strange things.</p>
+      <div class="about-grid">
+        <div class="about-cell"><div class="label">location</div><div class="value">Hawthorne, Florida</div></div>
+        <div class="about-cell"><div class="label">status</div><div class="value">Open to work</div></div>
+        <div class="about-cell"><div class="label">experience</div><div class="value">4 years</div></div>
+        <div class="about-cell"><div class="label">education</div><div class="value">BA - University at Buffalo</div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-about-contact">
+      <h1>Contact<em>.md</em></h1>
+      <p class="page-subtitle">$ cat /about_me/contact.md</p>
+      <hr class="divider">
+      <p>Inquiries for commissions, collaborations, and licensing welcome. Response time is usually within 48 hours.</p>
+      <div class="about-grid">
+        <div class="about-cell"><div class="label">email</div><div class="value" style="font-family:var(--mono);font-size:13px">hiddndesign@proton.me</div></div>
+        <div class="about-cell"><div class="label">instagram</div><div class="value" style="font-family:var(--mono);font-size:13px">@oh.bhaze</div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-featured-store1">
+      <h1><em>Store</em> 1</h1>
+      <p class="page-subtitle">$ ls /featured_in/store_1</p>
+      <hr class="divider">
+      <p>your store could be here!</p>
+    </section>
+
+    <section class="page" id="page-featured-store2">
+      <h1><em>Store</em> 2</h1>
+      <p class="page-subtitle">$ ls /featured_in/store_2</p>
+      <hr class="divider">
+      <p>your store could be here!</p>
+    </section>
+
+    <section class="page" id="page-featured-store3">
+      <h1><em>Store</em> 3</h1>
+      <p class="page-subtitle">$ ls /featured_in/store_3</p>
+      <hr class="divider">
+      <p>your store could be here!</p>
+    </section>
+
+    <section class="page" id="page-featured-coming">
+      <h1>Coming <em>Soon</em></h1>
+      <p class="page-subtitle">$ ls /featured_in/coming_soon</p>
+      <hr class="divider">
+      <p>Something new is on the way. Check back soon.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>2026 <span class="accent">portfolio</span></span>
+  <span>vibecoded with <span class="accent">html · css · js</span></span>
+</footer>
+
+<script>
+  var navLinks   = document.querySelectorAll('.nav-link');
+  var pages      = document.querySelectorAll('.page');
+  var breadcrumb = document.getElementById('breadcrumb-path');
+
+  function showPage(pageId, crumb) {
+    pages.forEach(function(p) { p.classList.remove('active'); });
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+    var target = document.getElementById('page-' + pageId);
+    if (target) target.classList.add('active');
+    var activeLink = document.querySelector('[data-page="' + pageId + '"]');
+    if (activeLink) activeLink.classList.add('active');
+    breadcrumb.textContent = crumb.replace(/^\//, '');
+  }
+
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      showPage(link.dataset.page, link.dataset.crumb);
+    });
+  });
+
+  var TRANSITION_MS = 300;
+  var shrinkTimers = new Map();
+
+  document.querySelectorAll('.gallery-item').forEach(function(item) {
+    item.addEventListener('mouseenter', function() {
+      if (shrinkTimers.has(item)) {
+        clearTimeout(shrinkTimers.get(item));
+        shrinkTimers.delete(item);
+      }
+      item.classList.remove('is-shrinking');
+      item.classList.add('is-hovered');
+    });
+    item.addEventListener('mouseleave', function() {
+      item.classList.remove('is-hovered');
+      item.classList.add('is-shrinking');
+      var t = setTimeout(function() {
+        item.classList.remove('is-shrinking');
+        item.style.zIndex = '';
+      }, TRANSITION_MS);
+      shrinkTimers.set(item, t);
+    });
+  });
+
+  document.getElementById('header-img').addEventListener('click', function() {
+    showPage('about-contact', '/about_me/contact');
+  });
+
+  document.querySelectorAll('.section-label').forEach(function(label) {
+    label.addEventListener('click', function() { toggleTree(label); });
+    label.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTree(label); }
+    });
+  });
+
+  function toggleTree(label) {
+    var targetId = label.dataset.target;
+    var tree = document.getElementById(targetId);
+    var isOpen = tree.classList.contains('open');
+    tree.classList.toggle('open');
+    label.classList.toggle('open');
+    label.setAttribute('aria-expanded', String(!isOpen));
+  }
+</script>
+</body>
+</html>
