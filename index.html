@@ -264,56 +264,12 @@
     .gallery-item:hover { border-color: var(--accent); }
     .gallery-item.is-hovered { transform: scale(1.2); box-shadow: 0 12px 40px rgba(0,0,0,0.6); z-index: 20; }
     .gallery-item.is-shrinking { z-index: 5; }
-    .gallery-item .gallery-overlay { opacity: 0; }
-    .gallery-item.is-hovered .gallery-overlay { opacity: 1; }
-    .gallery-item img { transition: none; }
-
-    .gallery-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(14,14,14,0.75);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-      gap: 4px;
-    }
-    .gallery-overlay span { font-size: 11px; color: var(--accent); }
-    .gallery-overlay small { font-size: 10px; color: var(--muted); }
-
-    .featured-list { display: flex; flex-direction: column; gap: 1px; margin-top: 24px; }
-    .featured-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 20px 24px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      transition: border-color 0.2s;
-    }
-    .featured-card:hover { border-color: var(--accent); }
-    .featured-card-body h3 { font-family: var(--serif); font-size: 16px; color: var(--text); margin-bottom: 4px; }
-    .featured-card-body p { font-size: 12px; color: var(--muted); margin: 0; }
-    .featured-card-meta { font-size: 10px; color: var(--accent2); white-space: nowrap; letter-spacing: 0.08em; }
+    .gallery-item img { transition: none; width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; }
     .about-cell { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
     .about-cell .label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .about-cell .value { font-family: var(--serif); font-size: 15px; color: var(--text); }
-
-    .tag {
-      display: inline-block;
-      background: rgba(110,200,120,0.1);
-      border: 1px solid rgba(110,200,120,0.3);
-      color: var(--accent);
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 2px;
-      letter-spacing: 0.08em;
-      margin: 3px 2px 3px 0;
-    }
 
     footer {
       height: var(--footer-h);
@@ -367,6 +323,146 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ── IMAGE EXPAND OVERLAY ──────────────────────────────────── */
+    #img-expand-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(4px);
+      animation: fadein 0.25s ease;
+    }
+    #img-expand-overlay.active { display: flex; align-items: center; justify-content: center; }
+
+    .expand-inner {
+      position: relative;
+      width: 90%;
+      max-width: 1100px;
+      height: 75vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+
+    .expand-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    #img-expand-overlay.active .expand-col-1 {
+      animation: expand-slide 0.35s ease 0.05s forwards;
+    }
+    #img-expand-overlay.active .expand-col-2 {
+      animation: expand-slide 0.35s ease 0.18s forwards;
+    }
+    #img-expand-overlay.active .expand-col-3 {
+      animation: expand-slide 0.35s ease 0.28s forwards;
+    }
+    @keyframes expand-slide {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .expand-img-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 70vh;
+      width: 100%;
+    }
+
+    .expand-img-wrap img {
+      display: block;
+      max-width: 100%;
+      max-height: 70vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 60px rgba(0,0,0,0.7);
+    }
+
+    .expand-col-2 .expand-img-wrap img {
+      border-color: var(--accent2);
+      box-shadow: 0 16px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(126,163,184,0.2);
+    }
+
+    .expand-col-3 {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0 20px 0 16px;
+      gap: 0;
+    }
+
+    .expand-set-tag {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--accent);
+      margin-bottom: 20px !important;
+      line-height: 1.2;
+    }
+
+    .expand-label {
+      font-size: 10px !important;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent2) !important;
+      margin-bottom: 6px !important;
+    }
+
+    .expand-body {
+      font-size: 12px !important;
+      color: #8aab90 !important;
+      line-height: 1.7;
+      margin-bottom: 0 !important;
+      max-width: 260px;
+    }
+
+    .expand-divider {
+      width: 32px;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    #expand-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s;
+      z-index: 10;
+      font-family: var(--mono);
+      line-height: 1;
+    }
+    #expand-close:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .expand-inner {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+      .expand-col { padding: 10px 16px; opacity: 1; transform: none; animation: none !important; }
+      .expand-img-wrap img { max-height: 55vw; }
+      #expand-close { top: 8px; right: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -453,42 +549,42 @@
       <p>Physical prints are made in house with a Canon iPF770 and signed with a stamped signature. Prints may appear different due to the printing process and physical health of printer components.</p>
       <p class="set-label"><span>/</span> set_1</p>
       <div class="gallery-grid gallery-grid-set1">
-        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_01.jpg" loading="lazy" alt="Set 1 - 01"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" loading="lazy" alt="Set 1 - 02"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" loading="lazy" alt="Set 1 - 03"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" loading="lazy" alt="Set 1 - 04"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" loading="lazy" alt="Set 1 - 05"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" loading="lazy" alt="Set 1 - 06"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" loading="lazy" alt="Set 1 - 07"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" loading="lazy" alt="Set 1 - 08"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" loading="lazy" alt="Set 1 - 09"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" loading="lazy" alt="Set 1 - 10"></div>
       </div>
       <p class="set-label"><span>/</span> set_2</p>
       <div class="gallery-grid gallery-grid-set2">
-        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_01.jpg" loading="lazy" alt="Set 2 - 01"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" loading="lazy" alt="Set 2 - 02"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" loading="lazy" alt="Set 2 - 03"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" loading="lazy" alt="Set 2 - 04"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" loading="lazy" alt="Set 2 - 05"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" loading="lazy" alt="Set 2 - 06"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" loading="lazy" alt="Set 2 - 07"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" loading="lazy" alt="Set 2 - 08"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" loading="lazy" alt="Set 2 - 09"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" loading="lazy" alt="Set 2 - 10"></div>
       </div>
       <p class="set-label"><span>/</span> coming_soon</p>
       <div class="gallery-grid gallery-grid-set3">
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
       </div>
     </section>
 
@@ -499,16 +595,16 @@
       <p>Mar. 10, 2026</p>
       <p>My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.</p>
       <div class="gallery-grid gallery-grid-set1">
-        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_01.jpg" loading="lazy" alt="Set 1 - 01"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" loading="lazy" alt="Set 1 - 02"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" loading="lazy" alt="Set 1 - 03"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" loading="lazy" alt="Set 1 - 04"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" loading="lazy" alt="Set 1 - 05"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" loading="lazy" alt="Set 1 - 06"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" loading="lazy" alt="Set 1 - 07"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" loading="lazy" alt="Set 1 - 08"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" loading="lazy" alt="Set 1 - 09"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" loading="lazy" alt="Set 1 - 10"></div>
       </div>
     </section>
 
@@ -518,16 +614,16 @@
       <hr class="divider">
       <p>In progress.</p>
       <div class="gallery-grid gallery-grid-set2">
-        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_01.jpg" loading="lazy" alt="Set 2 - 01"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" loading="lazy" alt="Set 2 - 02"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" loading="lazy" alt="Set 2 - 03"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" loading="lazy" alt="Set 2 - 04"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" loading="lazy" alt="Set 2 - 05"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" loading="lazy" alt="Set 2 - 06"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" loading="lazy" alt="Set 2 - 07"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" loading="lazy" alt="Set 2 - 08"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" loading="lazy" alt="Set 2 - 09"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" loading="lazy" alt="Set 2 - 10"></div>
       </div>
     </section>
 
@@ -537,16 +633,16 @@
       <hr class="divider">
       <p>New work on the way.</p>
       <div class="gallery-grid gallery-grid-set3">
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
       </div>
     </section>
 
@@ -614,6 +710,22 @@
   <span>built with <span class="accent">html · css · js</span></span>
 </footer>
 
+<!-- IMAGE EXPAND OVERLAY -->
+<div id="img-expand-overlay" role="dialog" aria-modal="true" aria-label="Image detail view">
+  <div class="expand-inner">
+    <button id="expand-close" aria-label="Close">&#10005;</button>
+    <div class="expand-col expand-col-1">
+      <div class="expand-img-wrap"><img id="expand-digital" src="" alt="" /></div>
+    </div>
+    <div class="expand-col expand-col-2">
+      <div class="expand-img-wrap"><img id="expand-printed" src="" alt="" /></div>
+    </div>
+    <div class="expand-col expand-col-3">
+      <div id="expand-desc"></div>
+    </div>
+  </div>
+</div>
+
 <script>
   var navLinks   = document.querySelectorAll('.nav-link');
   var pages      = document.querySelectorAll('.page');
@@ -658,24 +770,28 @@
   var TRANSITION_MS = 300;
   var shrinkTimers = new Map();
 
-  document.querySelectorAll('.gallery-item').forEach(function(item) {
-    item.addEventListener('mouseenter', function() {
-      if (shrinkTimers.has(item)) {
-        clearTimeout(shrinkTimers.get(item));
-        shrinkTimers.delete(item);
-      }
+  document.getElementById('main').addEventListener('mouseover', function(e) {
+    var item = e.target.closest('.gallery-item');
+    if (!item) return;
+    if (shrinkTimers.has(item)) {
+      clearTimeout(shrinkTimers.get(item));
+      shrinkTimers.delete(item);
+    }
+    item.classList.remove('is-shrinking');
+    item.classList.add('is-hovered');
+  });
+
+  document.getElementById('main').addEventListener('mouseout', function(e) {
+    var item = e.target.closest('.gallery-item');
+    if (!item) return;
+    if (item.contains(e.relatedTarget)) return;
+    item.classList.remove('is-hovered');
+    item.classList.add('is-shrinking');
+    var t = setTimeout(function() {
       item.classList.remove('is-shrinking');
-      item.classList.add('is-hovered');
-    });
-    item.addEventListener('mouseleave', function() {
-      item.classList.remove('is-hovered');
-      item.classList.add('is-shrinking');
-      var t = setTimeout(function() {
-        item.classList.remove('is-shrinking');
-        item.style.zIndex = '';
-      }, TRANSITION_MS);
-      shrinkTimers.set(item, t);
-    });
+      item.style.zIndex = '';
+    }, TRANSITION_MS);
+    shrinkTimers.set(item, t);
   });
 
   document.getElementById('header-img').addEventListener('click', function() {
@@ -692,11 +808,85 @@
   function toggleTree(label) {
     var targetId = label.dataset.target;
     var tree = document.getElementById(targetId);
+    if (!tree) return;
     var isOpen = tree.classList.contains('open');
-    tree.classList.toggle('open');
-    label.classList.toggle('open');
-    label.setAttribute('aria-expanded', String(!isOpen));
+    if (isOpen) {
+      tree.classList.remove('open');
+      label.classList.remove('open');
+      label.setAttribute('aria-expanded', 'false');
+    } else {
+      tree.classList.add('open');
+      label.classList.add('open');
+      label.setAttribute('aria-expanded', 'true');
+    }
   }
+
+  /* ── IMAGE EXPAND FEATURE ─────────────────────────────────────── */
+
+  var expandOverlay = document.getElementById('img-expand-overlay');
+  var expandDigital = document.getElementById('expand-digital');
+  var expandPrinted = document.getElementById('expand-printed');
+  var expandDesc    = document.getElementById('expand-desc');
+  var expandClose   = document.getElementById('expand-close');
+
+  // Single delegated click handler — ignores coming_soon (set3) items
+  document.getElementById('main').addEventListener('click', function(e) {
+    var item = e.target.closest(
+      '#page-gallery-set1 .gallery-item, #page-gallery-set2 .gallery-item, ' +
+      '#page-gallery-all .gallery-grid-set1 .gallery-item, ' +
+      '#page-gallery-all .gallery-grid-set2 .gallery-item'
+    );
+    if (!item) return;
+    (function() {
+      var img = item.querySelector('img');
+      if (!img) return;
+
+      var src = img.src; // e.g. .../images/set1_01.jpg
+      var filename = src.split('/').pop(); // set1_01.jpg
+      var printedSrc = src.replace(filename, 'printed_' + filename);
+
+      // Derive a label from filename, e.g. "set1_01.jpg" → "Set 1 · 01"
+      var labelMatch = filename.match(/^(set\d+)_(\d+)/i);
+      var setLabel   = labelMatch ? labelMatch[1].replace('set', 'Set ') : '';
+      var numLabel   = labelMatch ? parseInt(labelMatch[2], 10).toString().padStart(2, '0') : '';
+
+      expandDigital.src = src;
+      expandDigital.alt = img.alt;
+      expandPrinted.src = printedSrc;
+      expandPrinted.alt = 'Printed – ' + img.alt;
+
+      expandDesc.innerHTML =
+        '<p class="expand-set-tag">' + (setLabel ? setLabel + ' &nbsp;·&nbsp; ' + numLabel : filename) + '</p>' +
+        '<p class="expand-label">digital</p>' +
+        '<p class="expand-body">Original digital artwork processed from RAW photography.</p>' +
+        '<p class="expand-label" style="margin-top:18px;">printed</p>' +
+        '<p class="expand-body">Physical giclée print, Canon iPF770 · signed &amp; stamped.</p>';
+
+      expandOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    })();
+  });
+
+  function closeExpand() {
+    expandOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    // Small delay before clearing src so transition plays out
+    setTimeout(function() {
+      expandDigital.src = '';
+      expandPrinted.src = '';
+    }, 350);
+  }
+
+  expandClose.addEventListener('click', closeExpand);
+
+  expandOverlay.addEventListener('click', function(e) {
+    if (e.target === expandOverlay) closeExpand();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeExpand();
+  });
+
 </script>
 </body>
 </html>
