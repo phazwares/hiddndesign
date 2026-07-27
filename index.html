@@ -10,13 +10,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0e0e0e;
-      --surface:   #161616;
-      --border:    #2a2a2a;
-      --text:      #d4e8de;
-      --muted:     #666;
-      --accent:    #6ec878;
-      --accent2:   #7ea3b8;
+      --bg:        #0d0620;
+      --surface:   #170f2e;
+      --border:    #2f2643;
+      --text:      #f5f1e0;
+      --muted:     #8a8a94;
+      --accent:    #f583bd;
+      --accent2:   #9caf7c;
+      --text-body:   #c9c3d6;
+      --text-detail: #b3a8c4;
       --sidebar-w: 260px;
       --header-h:  56px;
       --footer-h:  48px;
@@ -24,7 +26,7 @@
       --serif:     'DM Serif Display', serif;
     }
 
-    html, body { height: 100%; }
+    html, body { min-height: 100%; }
 
     body {
       background: var(--bg);
@@ -69,18 +71,6 @@
       gap: 16px;
     }
 
-    .header-meta .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent2);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
     .header-image {
       width: 34px; height: 34px;
       border-radius: 50%;
@@ -105,17 +95,21 @@
     }
     .hamburger:hover { border-color: var(--accent); color: var(--accent); }
 
-    .layout { display: flex; flex: 1; overflow: hidden; }
+    .layout { display: flex; flex: 1; }
 
     aside {
       width: var(--sidebar-w);
       background: var(--surface);
       border-right: 1px solid var(--border);
-      overflow-y: auto;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       transition: transform 0.3s ease;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      overflow-y: auto;
+      z-index: 1;
     }
 
     .sidebar-header {
@@ -143,7 +137,7 @@
       letter-spacing: 0.02em;
       transition: background 0.15s;
     }
-    .section-label:hover { background: rgba(110,200,120,0.07); }
+    .section-label:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
     .section-label.active { color: var(--accent); }
     .section-label .icon {
       color: var(--accent);
@@ -196,7 +190,7 @@
     .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; }
     .sidebar-footer span { color: var(--accent); }
 
-    main { flex: 1; overflow-y: auto; padding: 40px 48px; }
+    main { flex: 1; padding: 40px 48px; position: relative; z-index: 2; }
 
     .breadcrumb {
       display: flex;
@@ -229,7 +223,7 @@
     h2 { font-family: var(--serif); font-size: 22px; color: var(--text); margin: 36px 0 12px; }
     .page-subtitle { color: var(--muted); font-size: 12px; margin-bottom: 36px; letter-spacing: 0.04em; }
     .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
-    p { color: #a0b8a4; font-size: 13px; line-height: 1.9; max-width: 620px; margin-bottom: 16px; }
+    p { color: var(--text-body); font-size: 13px; line-height: 1.9; max-width: 620px; margin-bottom: 16px; }
 
     .gallery-grid {
       display: grid;
@@ -248,6 +242,10 @@
     .gallery-grid-set2 .gallery-item,
     .gallery-grid-set3 .gallery-item { aspect-ratio: 17 / 22; }
 
+    .gallery-grid-wallpapers { grid-template-columns: repeat(2, 1fr); }
+
+    .gallery-grid-wallpapers .gallery-item { aspect-ratio: 16 / 9; }
+
     .set-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 32px 0 10px; }
     .set-label span { color: var(--accent); }
 
@@ -264,56 +262,12 @@
     .gallery-item:hover { border-color: var(--accent); }
     .gallery-item.is-hovered { transform: scale(1.2); box-shadow: 0 12px 40px rgba(0,0,0,0.6); z-index: 20; }
     .gallery-item.is-shrinking { z-index: 5; }
-    .gallery-item .gallery-overlay { opacity: 0; }
-    .gallery-item.is-hovered .gallery-overlay { opacity: 1; }
-    .gallery-item img { transition: none; }
-
-    .gallery-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(14,14,14,0.75);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-      gap: 4px;
-    }
-    .gallery-overlay span { font-size: 11px; color: var(--accent); }
-    .gallery-overlay small { font-size: 10px; color: var(--muted); }
-
-    .featured-list { display: flex; flex-direction: column; gap: 1px; margin-top: 24px; }
-    .featured-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 20px 24px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      transition: border-color 0.2s;
-    }
-    .featured-card:hover { border-color: var(--accent); }
-    .featured-card-body h3 { font-family: var(--serif); font-size: 16px; color: var(--text); margin-bottom: 4px; }
-    .featured-card-body p { font-size: 12px; color: var(--muted); margin: 0; }
-    .featured-card-meta { font-size: 10px; color: var(--accent2); white-space: nowrap; letter-spacing: 0.08em; }
+    .gallery-item img { transition: none; width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; }
     .about-cell { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
     .about-cell .label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .about-cell .value { font-family: var(--serif); font-size: 15px; color: var(--text); }
-
-    .tag {
-      display: inline-block;
-      background: rgba(110,200,120,0.1);
-      border: 1px solid rgba(110,200,120,0.3);
-      color: var(--accent);
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 2px;
-      letter-spacing: 0.08em;
-      margin: 3px 2px 3px 0;
-    }
 
     footer {
       height: var(--footer-h);
@@ -360,7 +314,6 @@
     @media (max-width: 480px) {
       main { padding: 20px 16px; }
       .header-logo { font-size: 14px; }
-      .status-text { display: none; }
     }
 
     ::-webkit-scrollbar { width: 4px; }
@@ -382,12 +335,23 @@
 
     .expand-inner {
       position: relative;
-      width: 90%;
-      max-width: 1100px;
-      height: 75vh;
+      width: auto;
+      max-width: 90vw;
+      height: auto;
+      max-height: 75vh;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: auto auto minmax(0, 260px);
+      align-items: center;
+      justify-content: center;
       gap: 0;
+    }
+
+    .expand-inner.single-image {
+      grid-template-columns: auto minmax(0, 300px);
+    }
+
+    .expand-inner.single-image .expand-img-wrap {
+      width: clamp(320px, 62vw, 900px);
     }
 
     .expand-col {
@@ -397,6 +361,7 @@
       padding: 0 12px;
       opacity: 0;
       transform: translateY(18px);
+      min-width: 0;
     }
     #img-expand-overlay.active .expand-col-1 {
       animation: expand-slide 0.35s ease 0.05s forwards;
@@ -415,8 +380,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: clamp(220px, 32vw, 400px);
+      height: 70vh;
       max-height: 70vh;
-      width: 100%;
     }
 
     .expand-img-wrap img {
@@ -432,7 +398,7 @@
 
     .expand-col-2 .expand-img-wrap img {
       border-color: var(--accent2);
-      box-shadow: 0 16px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(126,163,184,0.2);
+      box-shadow: 0 16px 60px rgba(0,0,0,0.7), 0 0 0 1px color-mix(in srgb, var(--accent2) 20%, transparent);
     }
 
     .expand-col-3 {
@@ -461,7 +427,7 @@
 
     .expand-body {
       font-size: 12px !important;
-      color: #8aab90 !important;
+      color: var(--text-detail) !important;
       line-height: 1.7;
       margin-bottom: 0 !important;
       max-width: 260px;
@@ -504,6 +470,7 @@
         padding: 20px 0;
       }
       .expand-col { padding: 10px 16px; opacity: 1; transform: none; animation: none !important; }
+      .expand-img-wrap { width: 100%; height: auto; }
       .expand-img-wrap img { max-height: 55vw; }
       #expand-close { top: 8px; right: 8px; }
     }
@@ -511,11 +478,162 @@
 </head>
 <body>
 
+<!-- ══════════════════════════════════════════════════════════════
+     SITE TEXT — edit anything below to change the site's copy.
+     Every heading, paragraph, label, and caption on the site is
+     pulled from this object. Nothing else in the file needs to
+     change to update text — just edit the strings here.
+     (HTML tags like <em> and &amp; entities are OK inside strings.)
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+  window.SITE_CONTENT = {
+
+    header: {
+      logo: '~/hiddndesign/bh/portfolio'
+    },
+
+    sidebar: {
+      title: 'file system'
+    },
+
+    meta: {
+      dirsLabel:    'directories',
+      foldersLabel: 'folders',
+      filesLabel:   'files'
+    },
+
+    // Sidebar folder/file labels — also reused as the "set" headings
+    // inside the All Works page, so they stay in sync automatically.
+    nav: {
+      galleryAll:          'all_works',
+      gallerySet1:         'set_1',
+      gallerySet2:         'set_2',
+      galleryWallpapers:   'digital_wallpapers',
+      galleryComingSoon:   'coming_soon',
+      aboutBio:            'bio.txt',
+      aboutContact:        'contact.md',
+      featuredStore1:      'store_1',
+      featuredStore2:      'store_2',
+      featuredStore3:      'store_3',
+      featuredComingSoon:  'coming_soon'
+    },
+
+    pages: {
+      galleryAll: {
+        title:    'All <em>Works</em>',
+        subtitle: '$ ls -la /gallery',
+        body1:    'A collection of all my digital artwork.',
+        body2:    'Original images are taken with a Kodak EasyShare Z8612 IS.',
+        body3:    'Physical prints are made in house with a Canon iPF770 and are stamped and signed with my signature (may change with set). Prints may appear different due to the printing process and physical health of printer components.'
+      },
+      gallerySet1: {
+        title:    '<em>Set</em> 1',
+        subtitle: '$ ls /gallery/set_1',
+        body1:    'Mar. 10, 2026',
+        body2:    'My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.'
+      },
+      gallerySet2: {
+        title:    '<em>Set</em> 2',
+        subtitle: '$ ls /gallery/set_2',
+        body1:    'In progress.'
+      },
+      galleryWallpapers: {
+        title:    'Digital <em>Wallpapers</em>',
+        subtitle: '$ ls /gallery/digital_wallpapers',
+        body1:    'A set of wide-format digital pieces designed for use as desktop wallpapers.'
+      },
+      galleryComingSoon: {
+        title:    'Coming <em>Soon</em>',
+        subtitle: '$ ls /gallery/coming_soon',
+        body1:    'New work on the way.'
+      },
+      aboutBio: {
+        title:      'Bio<em>.txt</em>',
+        subtitle:   '$ cat /about_me/bio.txt',
+        body1:      'I am a freelance graphic designer and artist.',
+        body2:      'Available for commissions, consultations, and collaborations.',
+        body3:      'All art featured on this website is of my own creation using open source software and software I legally own.',
+        signature:  '-B. Hazlett',
+        location:   'Hawthorne, Florida',
+        status:     'Open to work',
+        experience: '4 years',
+        education:  'BA - University at Buffalo'
+      },
+      aboutContact: {
+        title:     'Contact<em>.md</em>',
+        subtitle:  '$ cat /about_me/contact.md',
+        body1:     'All of the work can be resized for your specific needs. Any inquiries, questions, and discussions of my work are encouraged. I will try to respond in a timely manner.',
+        body2:     'My active operating hours are from 10:00AM - 6:00PM EST M-F',
+        email:     'hiddndesign@proton.me',
+        instagram: '@oh.bhaze'
+      },
+      featuredStore1: {
+        title: '<em>Store</em> 1', subtitle: '$ ls /featured_in/store_1', body1: 'Like my work? Want to be featured here? Let\'s collaborate!'
+      },
+      featuredStore2: {
+        title: '<em>Store</em> 2', subtitle: '$ ls /featured_in/store_2', body1: 'Like my work? Want to be featured here? Let\'s collaborate!'
+      },
+      featuredStore3: {
+        title: '<em>Store</em> 3', subtitle: '$ ls /featured_in/store_3', body1: 'Like my work? Want to be featured here? Let\'s collaborate!'
+      },
+      featuredComingSoon: {
+        title: 'Coming <em>Soon</em>', subtitle: '$ ls /featured_in/coming_soon', body1: 'Something new is on the way. Check back soon.'
+      }
+    },
+
+    // Shared caption template shown in the image expand view
+    captions: {
+      additionalNotesLabel: 'additional notes',
+
+      set1: {
+        tag:          'Set 1',
+        digitalLabel: 'digital',
+        digitalBody:  'Original digital artwork processed from RAW photography.',
+        printedLabel: 'printed',
+        printedBody:  'Physical giclée print, Canon iPF770 · signed &amp; stamped.'
+      },
+      set2: {
+        tag:          'Set 2',
+        digitalLabel: 'digital',
+        digitalBody:  'Original digital artwork processed from RAW photography.',
+        printedLabel: 'printed',
+        printedBody:  'Coming soon.'
+      },
+      wallpapers: {
+        tag:          'Digital Wallpapers',
+        digitalLabel: 'digital',
+        digitalBody:  'Original digital artwork processed from various digital and physical sources.'
+      }
+    },
+
+    // Per-image "Additional Notes" — key must exactly match the image
+    // filename (the part after images/, e.g. "set1_01.jpg"). Leave a
+    // filename out (or set it to '') to skip the notes section for
+    // that image entirely.
+    notes: {
+       'wallpaper_01.jpg': 'Sourced from Power Instinct (game)',
+       'wallpaper_02.jpg': 'Sourced from Attack on Titan (manga)',
+       'wallpaper_03.jpg': 'Sourced from Berserk (manga)',
+       'wallpaper_04.jpg': 'Sourced from Vinland Saga (manga)',
+       'wallpaper_05.jpg': 'Sourced from BLAME! (manga)',
+       'wallpaper_06.jpg': 'Sourced from Armored Core VI: Fires of Rubicon (game)',
+       'wallpaper_07.jpg': 'Sourced from Mobile Suit Gundam 0080: War in the Pocket (anime)',
+       'wallpaper_08.jpg': 'Sourced from Neon White (game)',
+       'wallpaper_09.jpg': 'Sourced from Overwatch (game)',
+       'wallpaper_10.jpg': 'Sourced from Overwatch (game)',
+    },
+
+    footer: {
+      left:  '2026 <span class="accent">portfolio</span>',
+      right: 'built with <span class="accent">html &middot; css &middot; js</span>'
+    }
+  };
+</script>
+
+
 <header>
-  <div class="header-logo">~/hiddndesign/bh/portfolio</div>
+  <div class="header-logo" data-content="header.logo">~/hiddndesign/bh/portfolio</div>
   <div class="header-meta">
-    <div class="dot"></div>
-    <span class="status-text">available for work</span>
     <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
     <img class="header-image" src="images/hiddndesign_icon_small.jpeg" alt="hiddndesign icon" id="header-img" style="cursor:pointer;" />
   </div>
@@ -524,7 +642,7 @@
 <div class="layout">
 
   <aside id="sidebar">
-    <div class="sidebar-header">file system</div>
+    <div class="sidebar-header" data-content="sidebar.title">file system</div>
     <nav class="tree" aria-label="Site navigation">
       <ul class="tree-root">
 
@@ -536,10 +654,11 @@
           </div>
           <div class="tree-children open" id="gallery-tree">
             <ul>
-              <li><a href="#" class="nav-link active" data-page="gallery-all" data-crumb="/gallery"><span class="file-icon">&#9702;</span> all_works</a></li>
-              <li><a href="#" class="nav-link" data-page="gallery-set1" data-crumb="/gallery/set_1"><span class="file-icon">&#9702;</span> set_1</a></li>
-              <li><a href="#" class="nav-link" data-page="gallery-set2" data-crumb="/gallery/set_2"><span class="file-icon">&#9702;</span> set_2</a></li>
-              <li><a href="#" class="nav-link" data-page="gallery-set3" data-crumb="/gallery/coming_soon"><span class="file-icon">&#9702;</span> coming_soon</a></li>
+              <li><a href="#" class="nav-link active" data-page="gallery-all" data-crumb="/gallery"><span class="file-icon">&#9702;</span> <span data-content="nav.galleryAll">all_works</span></a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set1" data-crumb="/gallery/set_1"><span class="file-icon">&#9702;</span> <span data-content="nav.gallerySet1">set_1</span></a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set2" data-crumb="/gallery/set_2"><span class="file-icon">&#9702;</span> <span data-content="nav.gallerySet2">set_2</span></a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-wallpapers" data-crumb="/gallery/digital_wallpapers"><span class="file-icon">&#9702;</span> <span data-content="nav.galleryWallpapers">digital_wallpapers</span></a></li>
+              <li><a href="#" class="nav-link" data-page="gallery-set3" data-crumb="/gallery/coming_soon"><span class="file-icon">&#9702;</span> <span data-content="nav.galleryComingSoon">coming_soon</span></a></li>
             </ul>
           </div>
         </li>
@@ -552,8 +671,8 @@
           </div>
           <div class="tree-children" id="about-tree">
             <ul>
-              <li><a href="#" class="nav-link" data-page="about-bio" data-crumb="/about_me/bio"><span class="file-icon">&#9702;</span> bio.txt</a></li>
-              <li><a href="#" class="nav-link" data-page="about-contact" data-crumb="/about_me/contact"><span class="file-icon">&#9702;</span> contact.md</a></li>
+              <li><a href="#" class="nav-link" data-page="about-bio" data-crumb="/about_me/bio"><span class="file-icon">&#9702;</span> <span data-content="nav.aboutBio">bio.txt</span></a></li>
+              <li><a href="#" class="nav-link" data-page="about-contact" data-crumb="/about_me/contact"><span class="file-icon">&#9702;</span> <span data-content="nav.aboutContact">contact.md</span></a></li>
             </ul>
           </div>
         </li>
@@ -566,17 +685,23 @@
           </div>
           <div class="tree-children" id="featured-tree">
             <ul>
-              <li><a href="#" class="nav-link" data-page="featured-store1" data-crumb="/featured_in/store_1"><span class="file-icon">&#9702;</span> store_1</a></li>
-              <li><a href="#" class="nav-link" data-page="featured-store2" data-crumb="/featured_in/store_2"><span class="file-icon">&#9702;</span> store_2</a></li>
-              <li><a href="#" class="nav-link" data-page="featured-store3" data-crumb="/featured_in/store_3"><span class="file-icon">&#9702;</span> store_3</a></li>
-              <li><a href="#" class="nav-link" data-page="featured-coming" data-crumb="/featured_in/coming_soon"><span class="file-icon">&#9702;</span> coming_soon</a></li>
+              <li><a href="#" class="nav-link" data-page="featured-store1" data-crumb="/featured_in/store_1"><span class="file-icon">&#9702;</span> <span data-content="nav.featuredStore1">store_1</span></a></li>
+              <li><a href="#" class="nav-link" data-page="featured-store2" data-crumb="/featured_in/store_2"><span class="file-icon">&#9702;</span> <span data-content="nav.featuredStore2">store_2</span></a></li>
+              <li><a href="#" class="nav-link" data-page="featured-store3" data-crumb="/featured_in/store_3"><span class="file-icon">&#9702;</span> <span data-content="nav.featuredStore3">store_3</span></a></li>
+              <li><a href="#" class="nav-link" data-page="featured-coming" data-crumb="/featured_in/coming_soon"><span class="file-icon">&#9702;</span> <span data-content="nav.featuredComingSoon">coming_soon</span></a></li>
             </ul>
           </div>
         </li>
 
       </ul>
     </nav>
-    <div class="sidebar-footer"><span>3</span> dirs &nbsp;&middot;&nbsp; <span>10</span> files</div>
+    <div class="sidebar-footer">
+      <span id="fs-dirs-count">0</span> <span data-content="meta.dirsLabel">directories</span>
+      &nbsp;&middot;&nbsp;
+      <span id="fs-folders-count">0</span> <span data-content="meta.foldersLabel">folders</span>
+      &nbsp;&middot;&nbsp;
+      <span id="fs-files-count">0</span> <span data-content="meta.filesLabel">files</span>
+    </div>
   </aside>
 
   <main id="main">
@@ -585,173 +710,205 @@
     </div>
 
     <section class="page active" id="page-gallery-all">
-      <h1>All <em>Works</em></h1>
-      <p class="page-subtitle">$ ls -la /gallery</p>
+      <h1 data-content="pages.galleryAll.title">All <em>Works</em></h1>
+      <p class="page-subtitle" data-content="pages.galleryAll.subtitle">$ ls -la /gallery</p>
       <hr class="divider">
-      <p>A collection of all my digital artwork.</p>
-      <p>Original images are taken with a Kodak EasyShare Z8612 IS.</p>
-      <p>Physical prints are made in house with a Canon iPF770 and signed with a stamped signature. Prints may appear different due to the printing process and physical health of printer components.</p>
-      <p class="set-label"><span>/</span> set_1</p>
+      <p data-content="pages.galleryAll.body1">A collection of all my digital artwork.</p>
+      <p data-content="pages.galleryAll.body2">Original images are taken with a Kodak EasyShare Z8612 IS.</p>
+      <p data-content="pages.galleryAll.body3">Physical prints are made in house with a Canon iPF770 and signed with a stamped signature. Prints may appear different due to the printing process and physical health of printer components.</p>
+      <p class="set-label"><span>/</span> <span data-content="nav.gallerySet1">set_1</span></p>
       <div class="gallery-grid gallery-grid-set1">
-        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_01.jpg" loading="lazy" alt="Set 1 - 01"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" loading="lazy" alt="Set 1 - 02"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" loading="lazy" alt="Set 1 - 03"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" loading="lazy" alt="Set 1 - 04"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" loading="lazy" alt="Set 1 - 05"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" loading="lazy" alt="Set 1 - 06"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" loading="lazy" alt="Set 1 - 07"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" loading="lazy" alt="Set 1 - 08"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" loading="lazy" alt="Set 1 - 09"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" loading="lazy" alt="Set 1 - 10"></div>
       </div>
-      <p class="set-label"><span>/</span> set_2</p>
+      <p class="set-label"><span>/</span> <span data-content="nav.gallerySet2">set_2</span></p>
       <div class="gallery-grid gallery-grid-set2">
-        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_01.jpg" loading="lazy" alt="Set 2 - 01"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" loading="lazy" alt="Set 2 - 02"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" loading="lazy" alt="Set 2 - 03"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" loading="lazy" alt="Set 2 - 04"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" loading="lazy" alt="Set 2 - 05"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" loading="lazy" alt="Set 2 - 06"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" loading="lazy" alt="Set 2 - 07"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" loading="lazy" alt="Set 2 - 08"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" loading="lazy" alt="Set 2 - 09"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" loading="lazy" alt="Set 2 - 10"></div>
       </div>
-      <p class="set-label"><span>/</span> coming_soon</p>
+      <p class="set-label"><span>/</span> <span data-content="nav.galleryWallpapers">digital_wallpapers</span></p>
+      <div class="gallery-grid gallery-grid-wallpapers">
+        <div class="gallery-item"><img src="images/wallpaper_01.jpg" loading="lazy" alt="Digital Wallpaper 01"></div>
+        <div class="gallery-item"><img src="images/wallpaper_02.jpg" loading="lazy" alt="Digital Wallpaper 02"></div>
+        <div class="gallery-item"><img src="images/wallpaper_03.jpg" loading="lazy" alt="Digital Wallpaper 03"></div>
+        <div class="gallery-item"><img src="images/wallpaper_04.jpg" loading="lazy" alt="Digital Wallpaper 04"></div>
+        <div class="gallery-item"><img src="images/wallpaper_05.jpg" loading="lazy" alt="Digital Wallpaper 05"></div>
+        <div class="gallery-item"><img src="images/wallpaper_06.jpg" loading="lazy" alt="Digital Wallpaper 06"></div>
+        <div class="gallery-item"><img src="images/wallpaper_07.jpg" loading="lazy" alt="Digital Wallpaper 07"></div>
+        <div class="gallery-item"><img src="images/wallpaper_08.jpg" loading="lazy" alt="Digital Wallpaper 08"></div>
+        <div class="gallery-item"><img src="images/wallpaper_09.jpg" loading="lazy" alt="Digital Wallpaper 09"></div>
+        <div class="gallery-item"><img src="images/wallpaper_10.jpg" loading="lazy" alt="Digital Wallpaper 10"></div>
+      </div>
+      <p class="set-label"><span>/</span> <span data-content="nav.galleryComingSoon">coming_soon</span></p>
       <div class="gallery-grid gallery-grid-set3">
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
       </div>
     </section>
 
     <section class="page" id="page-gallery-set1">
-      <h1><em>Set</em> 1</h1>
-      <p class="page-subtitle">$ ls /gallery/set_1</p>
+      <h1 data-content="pages.gallerySet1.title"><em>Set</em> 1</h1>
+      <p class="page-subtitle" data-content="pages.gallerySet1.subtitle">$ ls /gallery/set_1</p>
       <hr class="divider">
-      <p>Mar. 10, 2026</p>
-      <p>My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.</p>
+      <p data-content="pages.gallerySet1.body1">Mar. 10, 2026</p>
+      <p data-content="pages.gallerySet1.body2">My process focuses on emphasizing the hidden designs all around us. I enjoy being able to take an image from my camera and then, using contrast, color theory and software, manipulate it in a manner that deconstructs the original subject into basic parts that I can pick and choose from. This first set of mine features imagery of flowers, birds, ferns, lizards, and trees. While observing these entities, I enjoyed the smell and vibrancy of the flowers, the way the birds danced and taught their young, the drastic change of the ferns once it rained, the lizards who constantly chased each other and live (to this day) in the ac unit as if it were an apartment complex, and finally, the trees that began to sprout new growth and sway wonderfully in the wind.</p>
       <div class="gallery-grid gallery-grid-set1">
-        <div class="gallery-item"><img src="images/set1_01.jpg" alt="Set 1 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_02.jpg" alt="Set 1 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_03.jpg" alt="Set 1 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_04.jpg" alt="Set 1 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_05.jpg" alt="Set 1 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_06.jpg" alt="Set 1 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_07.jpg" alt="Set 1 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_08.jpg" alt="Set 1 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_09.jpg" alt="Set 1 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set1_10.jpg" alt="Set 1 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set1_01.jpg" loading="lazy" alt="Set 1 - 01"></div>
+        <div class="gallery-item"><img src="images/set1_02.jpg" loading="lazy" alt="Set 1 - 02"></div>
+        <div class="gallery-item"><img src="images/set1_03.jpg" loading="lazy" alt="Set 1 - 03"></div>
+        <div class="gallery-item"><img src="images/set1_04.jpg" loading="lazy" alt="Set 1 - 04"></div>
+        <div class="gallery-item"><img src="images/set1_05.jpg" loading="lazy" alt="Set 1 - 05"></div>
+        <div class="gallery-item"><img src="images/set1_06.jpg" loading="lazy" alt="Set 1 - 06"></div>
+        <div class="gallery-item"><img src="images/set1_07.jpg" loading="lazy" alt="Set 1 - 07"></div>
+        <div class="gallery-item"><img src="images/set1_08.jpg" loading="lazy" alt="Set 1 - 08"></div>
+        <div class="gallery-item"><img src="images/set1_09.jpg" loading="lazy" alt="Set 1 - 09"></div>
+        <div class="gallery-item"><img src="images/set1_10.jpg" loading="lazy" alt="Set 1 - 10"></div>
       </div>
     </section>
 
     <section class="page" id="page-gallery-set2">
-      <h1><em>Set</em> 2</h1>
-      <p class="page-subtitle">$ ls /gallery/set_2</p>
+      <h1 data-content="pages.gallerySet2.title"><em>Set</em> 2</h1>
+      <p class="page-subtitle" data-content="pages.gallerySet2.subtitle">$ ls /gallery/set_2</p>
       <hr class="divider">
-      <p>In progress.</p>
+      <p data-content="pages.gallerySet2.body1">In progress.</p>
       <div class="gallery-grid gallery-grid-set2">
-        <div class="gallery-item"><img src="images/set2_01.jpg" alt="Set 2 - 01" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_02.jpg" alt="Set 2 - 02" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_03.jpg" alt="Set 2 - 03" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_04.jpg" alt="Set 2 - 04" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_05.jpg" alt="Set 2 - 05" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_06.jpg" alt="Set 2 - 06" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_07.jpg" alt="Set 2 - 07" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_08.jpg" alt="Set 2 - 08" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_09.jpg" alt="Set 2 - 09" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/set2_10.jpg" alt="Set 2 - 10" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/set2_01.jpg" loading="lazy" alt="Set 2 - 01"></div>
+        <div class="gallery-item"><img src="images/set2_02.jpg" loading="lazy" alt="Set 2 - 02"></div>
+        <div class="gallery-item"><img src="images/set2_03.jpg" loading="lazy" alt="Set 2 - 03"></div>
+        <div class="gallery-item"><img src="images/set2_04.jpg" loading="lazy" alt="Set 2 - 04"></div>
+        <div class="gallery-item"><img src="images/set2_05.jpg" loading="lazy" alt="Set 2 - 05"></div>
+        <div class="gallery-item"><img src="images/set2_06.jpg" loading="lazy" alt="Set 2 - 06"></div>
+        <div class="gallery-item"><img src="images/set2_07.jpg" loading="lazy" alt="Set 2 - 07"></div>
+        <div class="gallery-item"><img src="images/set2_08.jpg" loading="lazy" alt="Set 2 - 08"></div>
+        <div class="gallery-item"><img src="images/set2_09.jpg" loading="lazy" alt="Set 2 - 09"></div>
+        <div class="gallery-item"><img src="images/set2_10.jpg" loading="lazy" alt="Set 2 - 10"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-gallery-wallpapers">
+      <h1 data-content="pages.galleryWallpapers.title">Digital <em>Wallpapers</em></h1>
+      <p class="page-subtitle" data-content="pages.galleryWallpapers.subtitle">$ ls /gallery/digital_wallpapers</p>
+      <hr class="divider">
+      <p data-content="pages.galleryWallpapers.body1">A set of wide-format digital pieces designed for use as phone and desktop wallpapers.</p>
+      <div class="gallery-grid gallery-grid-wallpapers">
+        <div class="gallery-item"><img src="images/wallpaper_01.jpg" loading="lazy" alt="Digital Wallpaper 01"></div>
+        <div class="gallery-item"><img src="images/wallpaper_02.jpg" loading="lazy" alt="Digital Wallpaper 02"></div>
+        <div class="gallery-item"><img src="images/wallpaper_03.jpg" loading="lazy" alt="Digital Wallpaper 03"></div>
+        <div class="gallery-item"><img src="images/wallpaper_04.jpg" loading="lazy" alt="Digital Wallpaper 04"></div>
+        <div class="gallery-item"><img src="images/wallpaper_05.jpg" loading="lazy" alt="Digital Wallpaper 05"></div>
+        <div class="gallery-item"><img src="images/wallpaper_06.jpg" loading="lazy" alt="Digital Wallpaper 06"></div>
+        <div class="gallery-item"><img src="images/wallpaper_07.jpg" loading="lazy" alt="Digital Wallpaper 07"></div>
+        <div class="gallery-item"><img src="images/wallpaper_08.jpg" loading="lazy" alt="Digital Wallpaper 08"></div>
+        <div class="gallery-item"><img src="images/wallpaper_09.jpg" loading="lazy" alt="Digital Wallpaper 09"></div>
+        <div class="gallery-item"><img src="images/wallpaper_10.jpg" loading="lazy" alt="Digital Wallpaper 10"></div>
       </div>
     </section>
 
     <section class="page" id="page-gallery-set3">
-      <h1>Coming <em>Soon</em></h1>
-      <p class="page-subtitle">$ ls /gallery/coming_soon</p>
+      <h1 data-content="pages.galleryComingSoon.title">Coming <em>Soon</em></h1>
+      <p class="page-subtitle" data-content="pages.galleryComingSoon.subtitle">$ ls /gallery/coming_soon</p>
       <hr class="divider">
-      <p>New work on the way.</p>
+      <p data-content="pages.galleryComingSoon.body1">New work on the way.</p>
       <div class="gallery-grid gallery-grid-set3">
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-        <div class="gallery-item"><img src="images/coming_soon.jpg" alt="Coming Soon" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
+        <div class="gallery-item"><img src="images/coming_soon.jpg" loading="lazy" alt="Coming Soon"></div>
       </div>
     </section>
 
     <section class="page" id="page-about-bio">
-      <h1>Bio<em>.txt</em></h1>
-      <p class="page-subtitle">$ cat /about_me/bio.txt</p>
+      <h1 data-content="pages.aboutBio.title">Bio<em>.txt</em></h1>
+      <p class="page-subtitle" data-content="pages.aboutBio.subtitle">$ cat /about_me/bio.txt</p>
       <hr class="divider">
-      <p> I am a freelance graphic designer and artist.</p>
-      <p>Available for commissions, consultations, and collaborations.</p>
-      <p>All art featured on this website is of my own creation using open source software and software I legally own.</p>
-      <p>-B. Hazlett</p>
+      <p data-content="pages.aboutBio.body1">I am a freelance graphic designer and artist.</p>
+      <p data-content="pages.aboutBio.body2">Available for commissions, consultations, and collaborations.</p>
+      <p data-content="pages.aboutBio.body3">All art featured on this website is of my own creation using open source software and software I legally own.</p>
+      <p data-content="pages.aboutBio.signature">-B. Hazlett</p>
       <div class="about-grid">
-        <div class="about-cell"><div class="label">location</div><div class="value">Hawthorne, Florida</div></div>
-        <div class="about-cell"><div class="label">status</div><div class="value">Open to work</div></div>
-        <div class="about-cell"><div class="label">experience</div><div class="value">4 years</div></div>
-        <div class="about-cell"><div class="label">education</div><div class="value">BA - University at Buffalo</div></div>
+        <div class="about-cell"><div class="label">location</div><div class="value" data-content="pages.aboutBio.location">Hawthorne, Florida</div></div>
+        <div class="about-cell"><div class="label">status</div><div class="value" data-content="pages.aboutBio.status">Open to work</div></div>
+        <div class="about-cell"><div class="label">experience</div><div class="value" data-content="pages.aboutBio.experience">4 years</div></div>
+        <div class="about-cell"><div class="label">education</div><div class="value" data-content="pages.aboutBio.education">BA - University at Buffalo</div></div>
       </div>
     </section>
 
     <section class="page" id="page-about-contact">
-      <h1>Contact<em>.md</em></h1>
-      <p class="page-subtitle">$ cat /about_me/contact.md</p>
+      <h1 data-content="pages.aboutContact.title">Contact<em>.md</em></h1>
+      <p class="page-subtitle" data-content="pages.aboutContact.subtitle">$ cat /about_me/contact.md</p>
       <hr class="divider">
-      <p>Inquiries, questions, and discussions of my work are encouraged, I will try to respond in a timely manner.</p>
-      <p>My active operating hours are from 10:00AM - 6:00PM EST M-F</p>
+      <p data-content="pages.aboutContact.body1">Inquiries, questions, and discussions of my work are encouraged, I will try to respond in a timely manner.</p>
+      <p data-content="pages.aboutContact.body2">My active operating hours are from 10:00AM - 6:00PM EST M-F</p>
       <div class="about-grid">
-        <div class="about-cell"><div class="label">email</div><div class="value" style="font-family:var(--mono);font-size:13px">hiddndesign@proton.me</div></div>
-        <div class="about-cell"><div class="label">instagram</div><div class="value" style="font-family:var(--mono);font-size:13px">@oh.bhaze</div></div>
+        <div class="about-cell"><div class="label">email</div><div class="value" style="font-family:var(--mono);font-size:13px" data-content="pages.aboutContact.email">hiddndesign@proton.me</div></div>
+        <div class="about-cell"><div class="label">instagram</div><div class="value" style="font-family:var(--mono);font-size:13px" data-content="pages.aboutContact.instagram">@oh.bhaze</div></div>
       </div>
     </section>
 
     <section class="page" id="page-featured-store1">
-      <h1><em>Store</em> 1</h1>
-      <p class="page-subtitle">$ ls /featured_in/store_1</p>
+      <h1 data-content="pages.featuredStore1.title"><em>Store</em> 1</h1>
+      <p class="page-subtitle" data-content="pages.featuredStore1.subtitle">$ ls /featured_in/store_1</p>
       <hr class="divider">
-      <p>Add store 1 content here.</p>
+      <p data-content="pages.featuredStore1.body1">Add store 1 content here.</p>
     </section>
 
     <section class="page" id="page-featured-store2">
-      <h1><em>Store</em> 2</h1>
-      <p class="page-subtitle">$ ls /featured_in/store_2</p>
+      <h1 data-content="pages.featuredStore2.title"><em>Store</em> 2</h1>
+      <p class="page-subtitle" data-content="pages.featuredStore2.subtitle">$ ls /featured_in/store_2</p>
       <hr class="divider">
-      <p>Add store 2 content here.</p>
+      <p data-content="pages.featuredStore2.body1">Add store 2 content here.</p>
     </section>
 
     <section class="page" id="page-featured-store3">
-      <h1><em>Store</em> 3</h1>
-      <p class="page-subtitle">$ ls /featured_in/store_3</p>
+      <h1 data-content="pages.featuredStore3.title"><em>Store</em> 3</h1>
+      <p class="page-subtitle" data-content="pages.featuredStore3.subtitle">$ ls /featured_in/store_3</p>
       <hr class="divider">
-      <p>Add store 3 content here.</p>
+      <p data-content="pages.featuredStore3.body1">Add store 3 content here.</p>
     </section>
 
     <section class="page" id="page-featured-coming">
-      <h1>Coming <em>Soon</em></h1>
-      <p class="page-subtitle">$ ls /featured_in/coming_soon</p>
+      <h1 data-content="pages.featuredComingSoon.title">Coming <em>Soon</em></h1>
+      <p class="page-subtitle" data-content="pages.featuredComingSoon.subtitle">$ ls /featured_in/coming_soon</p>
       <hr class="divider">
-      <p>Something new is on the way. Check back soon.</p>
+      <p data-content="pages.featuredComingSoon.body1">Something new is on the way. Check back soon.</p>
     </section>
 
   </main>
 </div>
 
 <footer>
-  <span>2026 <span class="accent">portfolio</span></span>
-  <span>built with <span class="accent">html · css · js</span></span>
+  <span data-content="footer.left">2026 <span class="accent">portfolio</span></span>
+  <span data-content="footer.right">built with <span class="accent">html · css · js</span></span>
 </footer>
 
 <!-- IMAGE EXPAND OVERLAY -->
@@ -771,6 +928,40 @@
 </div>
 
 <script>
+  /* Populate every [data-content] element from window.SITE_CONTENT,
+     using its data-content value as a dot-path into that object. */
+  (function applyContent() {
+    if (!window.SITE_CONTENT) return;
+    document.querySelectorAll('[data-content]').forEach(function(el) {
+      var path = el.getAttribute('data-content').split('.');
+      var val = window.SITE_CONTENT;
+      for (var i = 0; i < path.length; i++) {
+        if (val == null) return;
+        val = val[path[i]];
+      }
+      if (typeof val === 'string') el.innerHTML = val;
+    });
+  })();
+
+  // Compute the sidebar footer counts from the real page structure —
+  // no manual updating needed when sections or images are added/removed.
+  (function updateFileSystemStats() {
+    var dirsCount    = document.querySelectorAll('.section-label').length;      // /gallery, /about_me, /featured_in
+    var foldersCount = document.querySelectorAll('.nav-link').length;           // every sidebar entry under those dirs
+
+    var fileSrcs = new Set();
+    document.querySelectorAll('.gallery-item img').forEach(function(img) {
+      fileSrcs.add(img.getAttribute('src'));                                    // dedupe — same image can appear on All Works + its own page
+    });
+
+    var dirsEl    = document.getElementById('fs-dirs-count');
+    var foldersEl = document.getElementById('fs-folders-count');
+    var filesEl   = document.getElementById('fs-files-count');
+    if (dirsEl)    dirsEl.textContent    = dirsCount;
+    if (foldersEl) foldersEl.textContent = foldersCount;
+    if (filesEl)   filesEl.textContent   = fileSrcs.size;
+  })();
+
   var navLinks   = document.querySelectorAll('.nav-link');
   var pages      = document.querySelectorAll('.page');
   var breadcrumb = document.getElementById('breadcrumb-path');
@@ -785,6 +976,7 @@
     var activeLink = document.querySelector('[data-page="' + pageId + '"]');
     if (activeLink) activeLink.classList.add('active');
     breadcrumb.textContent = crumb.replace(/^\//, '');
+    window.scrollTo(0, 0);
   }
 
   function closeMobileNav() {
@@ -814,24 +1006,28 @@
   var TRANSITION_MS = 300;
   var shrinkTimers = new Map();
 
-  document.querySelectorAll('.gallery-item').forEach(function(item) {
-    item.addEventListener('mouseenter', function() {
-      if (shrinkTimers.has(item)) {
-        clearTimeout(shrinkTimers.get(item));
-        shrinkTimers.delete(item);
-      }
+  document.getElementById('main').addEventListener('mouseover', function(e) {
+    var item = e.target.closest('.gallery-item');
+    if (!item) return;
+    if (shrinkTimers.has(item)) {
+      clearTimeout(shrinkTimers.get(item));
+      shrinkTimers.delete(item);
+    }
+    item.classList.remove('is-shrinking');
+    item.classList.add('is-hovered');
+  });
+
+  document.getElementById('main').addEventListener('mouseout', function(e) {
+    var item = e.target.closest('.gallery-item');
+    if (!item) return;
+    if (item.contains(e.relatedTarget)) return;
+    item.classList.remove('is-hovered');
+    item.classList.add('is-shrinking');
+    var t = setTimeout(function() {
       item.classList.remove('is-shrinking');
-      item.classList.add('is-hovered');
-    });
-    item.addEventListener('mouseleave', function() {
-      item.classList.remove('is-hovered');
-      item.classList.add('is-shrinking');
-      var t = setTimeout(function() {
-        item.classList.remove('is-shrinking');
-        item.style.zIndex = '';
-      }, TRANSITION_MS);
-      shrinkTimers.set(item, t);
-    });
+      item.style.zIndex = '';
+    }, TRANSITION_MS);
+    shrinkTimers.set(item, t);
   });
 
   document.getElementById('header-img').addEventListener('click', function() {
@@ -864,45 +1060,86 @@
   /* ── IMAGE EXPAND FEATURE ─────────────────────────────────────── */
 
   var expandOverlay = document.getElementById('img-expand-overlay');
+  var expandInner   = document.querySelector('.expand-inner');
   var expandDigital = document.getElementById('expand-digital');
   var expandPrinted = document.getElementById('expand-printed');
+  var expandCol2    = document.querySelector('.expand-col-2');
   var expandDesc    = document.getElementById('expand-desc');
   var expandClose   = document.getElementById('expand-close');
 
-  // Only attach click to set1 and set2 items (not coming_soon set3)
-  document.querySelectorAll(
-    '#page-gallery-set1 .gallery-item, #page-gallery-set2 .gallery-item, ' +
-    '#page-gallery-all .gallery-grid-set1 .gallery-item, ' +
-    '#page-gallery-all .gallery-grid-set2 .gallery-item'
-  ).forEach(function(item) {
-    item.addEventListener('click', function() {
+  function additionalNotesHTML(filename) {
+    var note = window.SITE_CONTENT.notes[filename];
+    if (!note) return '';
+    return '<p class="expand-label" style="margin-top:18px;">' + window.SITE_CONTENT.captions.additionalNotesLabel + '</p>' +
+           '<p class="expand-body">' + note + '</p>';
+  }
+
+  // Single delegated click handler — ignores coming_soon (set3) items
+  document.getElementById('main').addEventListener('click', function(e) {
+    var item = e.target.closest(
+      '#page-gallery-set1 .gallery-item, #page-gallery-set2 .gallery-item, ' +
+      '#page-gallery-wallpapers .gallery-item, ' +
+      '#page-gallery-all .gallery-grid-set1 .gallery-item, ' +
+      '#page-gallery-all .gallery-grid-set2 .gallery-item, ' +
+      '#page-gallery-all .gallery-grid-wallpapers .gallery-item'
+    );
+    if (!item) return;
+    (function() {
       var img = item.querySelector('img');
       if (!img) return;
 
-      var src = img.src; // e.g. .../images/set1_01.jpg
-      var filename = src.split('/').pop(); // set1_01.jpg
-      var printedSrc = src.replace(filename, 'printed_' + filename);
+      var src = img.src; // e.g. .../images/set1_01.jpg or .../images/wallpaper_01.jpg
+      var filename = src.split('/').pop();
+      var isWallpaper = item.closest('.gallery-grid-wallpapers') !== null;
 
-      // Derive a label from filename, e.g. "set1_01.jpg" → "Set 1 · 01"
-      var labelMatch = filename.match(/^(set\d+)_(\d+)/i);
-      var setLabel   = labelMatch ? labelMatch[1].replace('set', 'Set ') : '';
-      var numLabel   = labelMatch ? parseInt(labelMatch[2], 10).toString().padStart(2, '0') : '';
+      // Which set/section is this item from? Each has its own caption group.
+      var setKey = isWallpaper ? 'wallpapers'
+                 : item.closest('.gallery-grid-set2') ? 'set2'
+                 : 'set1';
+      var cap = window.SITE_CONTENT.captions[setKey];
 
       expandDigital.src = src;
       expandDigital.alt = img.alt;
-      expandPrinted.src = printedSrc;
-      expandPrinted.alt = 'Printed – ' + img.alt;
 
-      expandDesc.innerHTML =
-        '<p class="expand-set-tag">' + (setLabel ? setLabel + ' &nbsp;·&nbsp; ' + numLabel : filename) + '</p>' +
-        '<p class="expand-label">digital</p>' +
-        '<p class="expand-body">Original digital artwork processed from RAW photography.</p>' +
-        '<p class="expand-label" style="margin-top:18px;">printed</p>' +
-        '<p class="expand-body">Physical giclée print, Canon iPF770 · signed &amp; stamped. · 8.5 x 11&quot;</p>';
+      if (isWallpaper) {
+        // Single-image mode: no printed version
+        expandInner.classList.add('single-image');
+        expandCol2.style.display = 'none';
+        expandPrinted.src = '';
+        expandPrinted.alt = '';
+
+        var wpMatch  = filename.match(/^wallpaper_(\d+)/i);
+        var numLabel = wpMatch ? parseInt(wpMatch[1], 10).toString().padStart(2, '0') : '';
+
+        expandDesc.innerHTML =
+          '<p class="expand-set-tag">' + (numLabel ? cap.tag + ' &nbsp;·&nbsp; ' + numLabel : filename) + '</p>' +
+          '<p class="expand-label">' + cap.digitalLabel + '</p>' +
+          '<p class="expand-body">' + cap.digitalBody + '</p>' +
+          additionalNotesHTML(filename);
+      } else {
+        // Two-image mode: digital + printed
+        expandInner.classList.remove('single-image');
+        expandCol2.style.display = '';
+
+        var printedSrc = src.replace(filename, 'printed_' + filename);
+        var labelMatch = filename.match(/^set\d+_(\d+)/i);
+        var numLabel2  = labelMatch ? parseInt(labelMatch[1], 10).toString().padStart(2, '0') : '';
+
+        expandPrinted.src = printedSrc;
+        expandPrinted.alt = 'Printed – ' + img.alt;
+
+        expandDesc.innerHTML =
+          '<p class="expand-set-tag">' + (numLabel2 ? cap.tag + ' &nbsp;·&nbsp; ' + numLabel2 : filename) + '</p>' +
+          '<p class="expand-label">' + cap.digitalLabel + '</p>' +
+          '<p class="expand-body">' + cap.digitalBody + '</p>' +
+          '<p class="expand-label" style="margin-top:18px;">' + cap.printedLabel + '</p>' +
+          '<p class="expand-body">' + cap.printedBody + '</p>' +
+          additionalNotesHTML(filename);
+      }
 
       expandOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
-    });
+    })();
   });
 
   function closeExpand() {
